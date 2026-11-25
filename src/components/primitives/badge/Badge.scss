@@ -1,0 +1,54 @@
+.v-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--radius-full);
+    padding: 0.125rem 0.5rem;
+    font-size: 0.6875rem;
+    font-family: var(--font-family);
+    font-weight: 600;
+    line-height: 1rem;
+    border: 1px solid transparent;
+    letter-spacing: 0.02em;
+
+    &--default {
+        background-color: var(--primary);
+        color: var(--on-primary);
+    }
+
+    &--secondary {
+        background-color: var(--secondary);
+        color: var(--on-secondary);
+        border-color: var(--on-secondary);
+    }
+
+    &--outline {
+        background-color: transparent;
+        border-color: var(--border);
+        color: var(--on-background);
+    }
+
+    &--destructive {
+        background-color: var(--destructive);
+        color: var(--on-destructive);
+        border-color: var(--on-destructive);
+    }
+
+    &--success {
+        background-color: var(--success);
+        color: var(--on-success);
+        border-color: var(--on-success);
+    }
+
+    &--info {
+        background-color: var(--info);
+        color: var(--on-info);
+        border-color: var(--on-info);
+    }
+}
+
+.v-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--v-text);
+    line-height: 1;
+}

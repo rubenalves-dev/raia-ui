@@ -8,13 +8,13 @@ const defaults: Partial<DividerProps> = {
 
 export function Divider(props: ParentProps<DividerProps>) {
   const merged = merge(defaults, props);
-  const resolved = children(() => props.children);
+  const resolved = children(() => merged.children);
   const hasLabel = () => !!resolved() && merged.orientation === "horizontal";
   const classes = () => [
     "v-divider",
-    `v-divider--${props.orientation}`,
+    `v-divider--${merged.orientation}`,
     {
-      "v-divider--dashed": props.dashed,
+      "v-divider--dashed": merged.dashed,
       "v-divider--with-label": hasLabel(),
     },
   ];
