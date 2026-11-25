@@ -1,0 +1,49 @@
+@use "./branding";
+
+@layer base {
+    :root {
+        // surfaces
+        --background: light-dark(var(--raia-neutral-100), var(--raia-neutral-700));
+        --surface: light-dark(var(--raia-neutral-200), var(--raia-neutral-500));
+        --card: light-dark(var(--raia-neutral-100), var(--raia-neutral-600));
+        --popover: light-dark(var(--raia-neutral-100), var(--raia-neutral-700));
+        --sidebar: light-dark(var(--raia-neutral-100), var(--raia-neutral-700));
+
+        --on-background: light-dark(var(--raia-neutral-700), var(--raia-neutral-100));
+        --on-surface: light-dark(var(--raia-neutral-700), var(--raia-neutral-200));
+        --on-card: light-dark(var(--raia-neutral-700), var(--raia-neutral-100));
+        --on-popover: light-dark(var(--raia-neutral-700), var(--raia-neutral-100));
+        --on-sidebar: light-dark(var(--raia-neutral-700), var(--raia-neutral-200));
+
+        // theme colors
+        --primary: light-dark(var(--raia-red-700), var(--raia-red-700));
+        --secondary: light-dark(var(--raia-blue-700), var(--raia-blue-700));
+        --accent: light-dark(var(--raia-teal-700), var(--raia-teal-700));
+        --muted: light-dark(var(--raia-neutral-300), var(--raia-neutral-300));
+        --destructive: light-dark(var(--raia-red-700), var(--raia-red-700));
+        --success: light-dark(var(--raia-green-700), var(--raia-green-700));
+        --warning: light-dark(var(--raia-yellow-700), var(--raia-yellow-700));
+        --info: light-dark(var(--raia-blue-700), var(--raia-blue-700));
+
+        --on-primary: light-dark(var(--raia-neutral-700), var(--raia-neutral-700));
+        --on-secondary: light-dark(var(--raia-neutral-700), var(--raia-neutral-700));
+        --on-accent: light-dark(var(--raia-neutral-700), var(--raia-neutral-700));
+        --on-muted: light-dark(var(--raia-neutral-600), var(--raia-neutral-600));
+        --on-destructive: light-dark(var(--raia-neutral-700), var(--raia-neutral-700));
+        --on-success: var(--raia-neutral-700);
+        --on-warning: var(--raia-neutral-700);
+        --on-info: var(--raia--neutral-700);
+
+        // structural colors
+        --border: light-dark(var(--raia-neutral-300), var(--raia-neutral-400));
+        --input: light-dark(var(--raia-neutral-100), var(--raia-neutral-600));
+        --ring: light-dark(var(--raia-red-700), var(--raia-red-700));
+
+        // chart
+        --chart-1: light-dark(var(--raia-red-700), var(--raia-red-700));
+        --chart-2: light-dark(var(--raia-teal-700), var(--raia-teal-700));
+        --chart-3: light-dark(var(--raia-blue-700), var(--raia-blue-700));
+        --chart-4: light-dark(var(--raia-yellow-700), var(--raia-yellow-700));
+        --chart-5: light-dark(var(--raia-purple-700), var(--raia-purple-700));
+    }
+}

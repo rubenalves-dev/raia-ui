@@ -1,0 +1,55 @@
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap");
+
+@layer base {
+    :root {
+        // Base Mid-Tones
+        --raia-red-700: #c96b5e;
+        --raia-orange-700: #d28d54;
+        --raia-yellow-700: #d6ae66;
+        --raia-green-700: #7ba886;
+        --raia-teal-700: #6cb3a6;
+        --raia-blue-700: #7398c2;
+        --raia-purple-700: #b57ec4;
+
+        // Lighter / Low-Saturation Tints
+        --raia-red-600: #e2a39d;
+        --raia-orange-600: #e5ba9b;
+        --raia-yellow-600: #e4cfa2;
+        --raia-green-600: #b4ceb8;
+        --raia-teal-600: #a7d3cc;
+        --raia-blue-600: #a9c2de;
+        --raia-purple-600: #d3b2dc;
+
+        // Neutrals
+        --raia-neutral-700: #1b1e20;
+        --raia-neutral-600: #3a4042;
+        --raia-neutral-500: #5a6065;
+        --raia-neutral-400: #7a7f84;
+        --raia-neutral-300: #9ea38f;
+        --raia-neutral-200: #d5cec4;
+        --raia-neutral-100: #eae2d6;
+
+        // Branding Requirements
+        --raia--radius: 0px;
+
+        --raia-font-family: "Fira Code", monospace;
+
+        --raia-text-xs: 0.75rem; // 12px
+        --raia-text-sm: 0.875rem; // 14px
+        --raia-text-base: 1rem; // 16px
+        --raia-text-lg: 1.125rem; // 18px
+        --raia-text-xl: 1.25rem; // 20px
+        --raia-text-2xl: 1.5rem; // 24px
+
+        --raia-heading-1: 2.5rem; // 40px
+        --raia-heading-2: 2rem; // 32px
+        --raia-heading-3: 1.75rem; // 28px
+        --raia-heading-4: 1.5rem; // 24px
+
+        --raia-font-light: 300;
+        --raia-font-normal: 400;
+        --raia-font-medium: 500;
+        --raia-font-semibold: 600;
+        --raia-font-bold: 700;
+    }
+}

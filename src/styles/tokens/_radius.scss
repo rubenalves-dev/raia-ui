@@ -1,0 +1,12 @@
+@layer base {
+    :root {
+        --radius-override: 0px;
+
+        --radius-sm: var(--radius-override, 0.25rem); // 4px
+        --radius-md: var(--radius-override, 0.5rem); // 8px
+        --radius-lg: var(--radius-override, 0.75rem); // 12px
+        --radius-xl: var(--radius-override, 1rem); // 16px
+        --radius-2xl: var(--radius-override, 1.5rem); // 24px
+        --radius-full: var(--radius-override, 9999px); // 9999px
+    }
+}

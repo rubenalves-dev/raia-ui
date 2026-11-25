@@ -1,0 +1,100 @@
+.v-spinner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--spinner-size, 1.25rem);
+    block-size: var(--spinner-size, 1.25rem);
+    flex-shrink: 0;
+    // border: 2px solid currentColor;
+    // border-right-color: transparent;
+    // border-radius: 50%;
+    // animation: v-spinner-rotate 600ms linear infinite;
+
+    &--blocks {
+        display: inline-grid;
+        place-items: stretch;
+        grid-template-columns: repeat(2, 2fr);
+        grid-template-rows: repeat(2, 2fr);
+        gap: max(2px, calc(var(--spinner-size, 1.25rem) * 0.12));
+        padding: 1px;
+    }
+
+    &__block {
+        background-color: currentColor;
+        border-radius: min(var(--radius-sm, 0px), 2px);
+        animation: v-spinner-block-pulse 1000ms ease-in-out infinite;
+
+        &:nth-child(1) {
+            animation-delay: 0ms;
+        }
+        &:nth-child(2) {
+            animation-delay: 150ms;
+        }
+        &:nth-child(3) {
+            animation-delay: 450ms;
+        }
+        &:nth-child(4) {
+            animation-delay: 300ms;
+        }
+    }
+
+    &--bars {
+        gap: max(2px, calc(var(--spinner-size, 1.25rem) * 0.14));
+    }
+
+    &__bar {
+        flex: 1;
+        height: 100%;
+        background-color: currentColor;
+        border-radius: min(var(--radius-sm, 0px), 2px);
+        animation: v-spinner-bar-pulse 900ms ease-in-out infinite;
+
+        &:nth-child(1) {
+            animation-delay: 0ms;
+        }
+        &:nth-child(2) {
+            animation-delay: 150ms;
+        }
+        &:nth-child(3) {
+            animation-delay: 300ms;
+        }
+    }
+
+    &--ring {
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: v-spinner-rotate 600ms linear infinite;
+    }
+}
+
+@keyframes v-spinner-block-pulse {
+    0%,
+    100% {
+        opacity: 0.25;
+        scale: 0.82;
+    }
+
+    50% {
+        opacity: 1;
+        scale: 1;
+    }
+}
+
+@keyframes v-spinner-bar-pulse {
+    0%,
+    100% {
+        opacity: 0.3;
+        scale: 1 0.45;
+    }
+    50% {
+        opacity: 1;
+        scale: 1 1;
+    }
+}
+
+@keyframes v-spinner-rotate {
+    to {
+        rotate: 360deg;
+    }
+}

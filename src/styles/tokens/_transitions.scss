@@ -1,0 +1,11 @@
+@layer base {
+    :root {
+        --transition-fast: 120ms ease;
+        --transition-medium: 240ms ease;
+        --transition-slow: 360ms ease;
+
+        --transition-elastic-fast: 120ms cubic-bezier(0.68, -0.2, 0.27, 1.55);
+        --transition-elastic-medium: 240ms cubic-bezier(0.68, -0.2, 0.27, 1.55);
+        --transition-elastic-slow: 360ms cubic-bezier(0.68, -0.2, 0.27, 1.55);
+    }
+}

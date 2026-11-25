@@ -1,0 +1,18 @@
+// Resets for CSS
+:root {
+    color-scheme: light;
+}
+
+:root[data-theme="dark"],
+:root.dark,
+[data-theme="dark"],
+.dark {
+    color-scheme: dark;
+}
+
+:root[data-theme="light"],
+:root.light,
+[data-theme="light"],
+.light {
+    color-scheme: light;
+}

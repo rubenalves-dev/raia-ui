@@ -1,0 +1,26 @@
+@use "./branding";
+
+@layer base {
+    :root {
+        --font-family: var(--raia-font-family);
+        // --font-family: var(--raia-font-family);
+
+        --text-xs: var(--raia-text-xs); // 12px
+        --text-sm: var(--raia-text-sm); // 14px
+        --text-base: var(--raia-text-base); // 16px
+        --text-lg: var(--raia-text-lg); // 18px
+        --text-xl: var(--raia-text-xl); // 20px
+        --text-2xl: var(--raia-text-2xl); // 24px
+
+        --heading-1: var(--raia-heading-1); // 40px
+        --heading-2: var(--raia-heading-2); // 32px
+        --heading-3: var(--raia-heading-3); // 28px
+        --heading-4: var(--raia-heading-4); // 24px
+
+        --font-light: var(--raia-font-light);
+        --font-normal: var(--raia-font-normal);
+        --font-medium: var(--raia-font-medium);
+        --font-semibold: var(--raia-font-semibold);
+        --font-bold: var(--raia-font-bold);
+    }
+}

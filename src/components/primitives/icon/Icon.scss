@@ -1,0 +1,15 @@
+.v-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--icon-size, 1em);
+    block-size: var(--icon-size, 1em);
+    flex-shrink: 0;
+    line-height: 1;
+
+    :deep(svg) {
+        inline-size: 100%;
+        block-size: 100%;
+        display: block;
+    }
+}
