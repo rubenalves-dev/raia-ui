@@ -1,13 +1,13 @@
-import { ParentProps } from "solid-js";
+import { createSignal, ParentProps } from "solid-js";
 import { TooltipProps } from "./Tooltip.types";
 import { createTooltip } from "../../../primitives/createTooltip";
 import "./Tooltip.scss";
 
 export function Tooltip(props: ParentProps<TooltipProps>) {
-  let trigger!: HTMLSpanElement;
+  const [trigger, setTrigger] = createSignal<HTMLSpanElement | undefined>();
 
   createTooltip(
-    () => trigger,
+    trigger,
     () => ({
       content: props.content,
       placement: props.placement,
@@ -18,7 +18,7 @@ export function Tooltip(props: ParentProps<TooltipProps>) {
   );
 
   return (
-    <span ref={trigger} class={["v-tooltip-trigger", props.class]}>
+    <span ref={setTrigger} class={["v-tooltip-trigger", props.class]}>
       {props.children}
     </span>
   );

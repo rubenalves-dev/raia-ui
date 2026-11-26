@@ -21,7 +21,7 @@
     box-shadow: var(--shadow-md);
     pointer-events: none;
     z-index: 9999;
-    animation: v-tooltip-center var(--transition-elastic-fast);
+    animation: v-tooltip-enter var(--transition-elastic-fast);
 
     &::backdrop {
         display: none;

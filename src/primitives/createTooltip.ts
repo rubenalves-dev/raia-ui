@@ -107,6 +107,7 @@ export function createTooltip(
   createEffect(
     () => target(),
     (el) => {
+      pos.setAnchor(el);
       if (!el) return;
 
       const scheduleShow = () => {
@@ -126,6 +127,7 @@ export function createTooltip(
       el.addEventListener("keydown", onKeyDown);
 
       onCleanup(() => {
+        pos.setAnchor(undefined);
         hide();
         teardownTip(el);
         el.removeEventListener("pointerenter", scheduleShow);

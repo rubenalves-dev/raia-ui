@@ -101,9 +101,9 @@ export function App() {
   }));
 
   // createTooltip primitive demo
-  let rawTipEl: HTMLSpanElement | undefined;
+  const [rawTipEl, setRawTipEl] = createSignal<HTMLSpanElement | undefined>();
   createTooltip(
-    () => rawTipEl,
+    rawTipEl,
     () => ({
       content: "Attached via createTooltip() primitive",
       placement: "right",
@@ -561,13 +561,13 @@ export function App() {
             </div>
           </div>
 
-          <span ref={rawTipEl} tabindex="0" class="pg-tooltip-target">
+          <span ref={setRawTipEl} tabindex="0" class="pg-tooltip-target">
             <Icon name="info" size="sm" />
             Hover or focus this span
           </span>
 
           <Tooltip content="Eu sou uma tooltip">
-            <span ref={rawTipEl} tabindex="0" class="pg-tooltip-target">
+            <span tabindex="0" class="pg-tooltip-target">
               <Icon name="info" size="sm" />
               Hover or focus this span
             </span>
