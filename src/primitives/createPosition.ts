@@ -62,7 +62,7 @@ export function createPosition(
         };
       case "top-end":
         return {
-          x: aRect.left - fRect.width,
+          x: aRect.left + (aRect.width - fRect.width),
           y: aRect.top - fRect.height - gap,
         };
       case "bottom":
@@ -77,7 +77,7 @@ export function createPosition(
         };
       case "bottom-end":
         return {
-          x: aRect.left - fRect.width,
+          x: aRect.left + (aRect.width - fRect.width),
           y: aRect.bottom + gap,
         };
       case "left":
@@ -87,7 +87,7 @@ export function createPosition(
         };
       case "right":
         return {
-          x: aRect.right - gap,
+          x: aRect.right + gap,
           y: aRect.top + (aRect.height - fRect.height) / 2,
         };
     }
@@ -123,14 +123,8 @@ export function createPosition(
       }
     }
 
-    const clampedX = Math.max(
-      pad,
-      Math.min(coords.x, vw - fRect.width - pad),
-    );
-    const clampedY = Math.max(
-      pad,
-      Math.min(coords.y, vh - fRect.height - pad),
-    );
+    const clampedX = Math.max(pad, Math.min(coords.x, vw - fRect.width - pad));
+    const clampedY = Math.max(pad, Math.min(coords.y, vh - fRect.height - pad));
 
     setResolvedPlacement(active);
     setX(Math.round(clampedX));
