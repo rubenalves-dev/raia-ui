@@ -26,61 +26,68 @@ export interface PositionResult {
   readonly update: () => void;
 }
 
-export function createPosition(opts: CreatePositionOpts = {}): PositionResult {
-  const placement = opts.placement ?? "bottom-start";
-  const offset = opts.offset ?? 6;
-  const padding = opts.padding ?? 8;
+export function createPosition(
+  input: CreatePositionOpts | Accessor<CreatePositionOpts> = {},
+): PositionResult {
+  const getOpts = (): CreatePositionOpts =>
+    typeof input === "function" ? input() : input;
+
+  const placement = () => getOpts().placement ?? "bottom-start";
+  const offset = () => getOpts().offset ?? 6;
+  const padding = () => getOpts().padding ?? 8;
 
   const [anchor, setAnchor] = createSignal<HTMLElement | undefined>();
   const [floating, setFloating] = createSignal<HTMLElement | undefined>();
   const [x, setX] = createSignal(0);
   const [y, setY] = createSignal(0);
-  const [resolvedPlacement, setResolvedPlacement] = createSignal(placement);
+  const [resolvedPlacement, setResolvedPlacement] =
+    createSignal<Placement>("bottom-start");
 
   function computeCoords(
     aRect: DOMRect,
     fRect: DOMRect,
     target: Placement,
   ): { x: number; y: number } {
+    const gap = offset();
     switch (target) {
       case "top":
         return {
           x: aRect.left + (aRect.width - fRect.width) / 2,
-          y: aRect.top - fRect.height - offset,
+          y: aRect.top - fRect.height - gap,
         };
       case "top-start":
         return {
           x: aRect.left,
-          y: aRect.top - fRect.height - offset,
+          y: aRect.top - fRect.height - gap,
         };
       case "top-end":
         return {
           x: aRect.left - fRect.width,
-          y: aRect.top - fRect.height - offset,
+          y: aRect.top - fRect.height - gap,
         };
       case "bottom":
         return {
           x: aRect.left + (aRect.width - fRect.width) / 2,
-          y: aRect.bottom + offset,
+          y: aRect.bottom + gap,
         };
       case "bottom-start":
         return {
           x: aRect.left,
-          y: aRect.bottom + offset,
+          y: aRect.bottom + gap,
         };
       case "bottom-end":
         return {
           x: aRect.left - fRect.width,
-          y: aRect.bottom + offset,
+          y: aRect.bottom + gap,
         };
       case "left":
         return {
-          x: aRect.left - fRect.width - offset,
+          x: aRect.left - fRect.width - gap,
           y: aRect.top + (aRect.height - fRect.height) / 2,
         };
       case "right":
         return {
-          x: aRect.right - offset,
+          x: aRect.right - gap,
           y: aRect.top + (aRect.height - fRect.height) / 2,
         };
     }
@@ -95,33 +102,34 @@ export function createPosition(opts: CreatePositionOpts = {}): PositionResult {
     const fRect = fEl.getBoundingClientRect();
     const vw = window.innerWidth;
     const vh = window.innerHeight;
+    const pad = padding();
 
-    let active = placement;
+    let active = placement();
     let coords = computeCoords(aRect, fRect, active);
 
-    if (active.startsWith("bottom") && coords.y + fRect.height > vh - padding) {
+    if (active.startsWith("bottom") && coords.y + fRect.height > vh - pad) {
       const flipped = active.replace("bottom", "top") as Placement;
       const flippedCoords = computeCoords(aRect, fRect, flipped);
-      if (flippedCoords.y >= padding) {
+      if (flippedCoords.y >= pad) {
         active = flipped;
         coords = flippedCoords;
       }
-    } else if (active.startsWith("top") && coords.y < padding) {
+    } else if (active.startsWith("top") && coords.y < pad) {
       const flipped = active.replace("top", "bottom") as Placement;
       const flippedCoords = computeCoords(aRect, fRect, flipped);
-      if (flippedCoords.y + fRect.height <= vh - padding) {
+      if (flippedCoords.y + fRect.height <= vh - pad) {
         active = flipped;
         coords = flippedCoords;
       }
     }
 
     const clampedX = Math.max(
-      padding,
-      Math.min(coords.x, vw - fRect.width - padding),
+      pad,
+      Math.min(coords.x, vw - fRect.width - pad),
     );
     const clampedY = Math.max(
-      padding,
-      Math.min(coords.y, vh - fRect.height - padding),
+      pad,
+      Math.min(coords.y, vh - fRect.height - pad),
     );
 
     setResolvedPlacement(active);
@@ -130,11 +138,17 @@ export function createPosition(opts: CreatePositionOpts = {}): PositionResult {
   }
 
   createEffect(
-    () => ({
-      isOpen: opts.open ? opts.open() : true,
-      aEl: anchor(),
-      fEl: floating(),
-    }),
+    () => {
+      const o = getOpts();
+      return {
+        isOpen: o.open ? o.open() : true,
+        aEl: anchor(),
+        fEl: floating(),
+        placement: o.placement ?? "bottom-start",
+        offset: o.offset ?? 6,
+        padding: o.padding ?? 8,
+      };
+    },
     ({ isOpen, aEl, fEl }) => {
       if (!isOpen || !aEl || !fEl) return;
 

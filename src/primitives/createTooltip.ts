@@ -12,24 +12,29 @@ export interface TooltipOpts {
 
 export function createTooltip(
   target: Accessor<HTMLElement | undefined>,
-  input: string | TooltipOpts,
+  input: string | TooltipOpts | Accessor<string | TooltipOpts>,
 ) {
-  const opts: TooltipOpts =
-    typeof input === "object" && input !== null && "content" in input
-      ? input
-      : { content: input };
-  const delay = opts.delay ?? 200;
+  const getOpts = (): TooltipOpts => {
+    const raw = typeof input === "function" ? input() : input;
+    return typeof raw === "object" && raw !== null && "content" in raw
+      ? raw
+      : { content: raw };
+  };
+  const delay = () => getOpts().delay ?? 200;
   const tipId = `v-tooltip-${createUniqueId()}`;
 
   const disclosure = createDisclosure();
-  const pos = createPosition({
-    placement: opts.placement ?? "top",
-    offset: opts.offset ?? 6,
-    open: disclosure.isOpen,
+  const pos = createPosition(() => {
+    const o = getOpts();
+    return {
+      placement: o.placement ?? "top",
+      offset: o.offset ?? 6,
+      open: disclosure.isOpen,
+    };
   });
 
-  const resolvedContent = () => opts.content;
-  const isDisabled = () => opts.disabled ?? false;
+  const resolvedContent = () => getOpts().content;
+  const isDisabled = () => getOpts().disabled ?? false;
 
   let tipEl: HTMLDivElement | null = null;
   let showTimer: ReturnType<typeof setTimeout> | null = null;
@@ -107,7 +112,7 @@ export function createTooltip(
       const scheduleShow = () => {
         if (isDisabled() || !resolvedContent()) return;
         if (showTimer) clearTimeout(showTimer);
-        showTimer = setTimeout(disclosure.open, delay);
+        showTimer = setTimeout(disclosure.open, delay());
       };
 
       const onKeyDown = (e: KeyboardEvent) => {
