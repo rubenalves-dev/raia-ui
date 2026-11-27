@@ -9,8 +9,8 @@ import type {
 } from "./types";
 
 export * from "./types";
-export * from "./validators";
 export * from "./useField";
+export * from "./validators";
 
 export function createForm<T extends Record<string, unknown>>(
   initialModel: T,
@@ -73,6 +73,19 @@ export function createForm<T extends Record<string, unknown>>(
   }
 
   const rootFn = (() => rootState) as FormTree<T>;
-  Object.assign(rootFn, built.tree, { submit, reset, markAllTouched });
+  for (const [key, val] of Object.entries({
+    ...built.tree,
+    submit,
+    reset,
+    markAllTouched,
+  })) {
+    Object.defineProperty(rootFn, key, {
+      value: val,
+      configurable: true,
+      writable: true,
+      enumerable: true,
+    });
+  }
+
   return rootFn;
 }

@@ -1,4 +1,4 @@
-import { Accessor, createContext, useContext } from "solid-js";
+import { Accessor, createContext, omit, useContext } from "solid-js";
 import type { FieldNode } from "./types";
 
 export interface FormFieldContextValue {
@@ -43,4 +43,21 @@ export function useField<T>(props: FieldBindProps<T>) {
       props.onBlur?.();
     },
   };
+}
+
+export const FIELD_BIND_KEYS = [
+  "id",
+  "field",
+  "value",
+  "disabled",
+  "invalid",
+  "onChange",
+  "onBlur",
+] as const;
+
+export function omitFieldProps<
+  P extends FieldBindProps<any>,
+  K extends keyof P = never,
+>(props: P, ...extraKeys: K[]) {
+  return omit(props, ...FIELD_BIND_KEYS, ...extraKeys);
 }

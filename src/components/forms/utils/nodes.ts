@@ -379,12 +379,7 @@ export function buildNodeTree<T>(
   const pathRecord = pathNode as unknown as Record<string, FieldPath<unknown>>;
 
   for (const key of keys) {
-    const built = buildNodeTree(
-      model[key],
-      pathRecord[key],
-      valueOf,
-      pathMap,
-    );
+    const built = buildNodeTree(model[key], pathRecord[key], valueOf, pathMap);
     childTrees[key] = built.tree;
     childStates[key] = built.groupState;
     childControls[key] = built.controls;
@@ -416,7 +411,15 @@ export function buildNodeTree<T>(
   pathMap.set(pathNode, groupState.value);
 
   const groupFn = (() => groupState) as unknown as FieldTree<T>;
-  Object.assign(groupFn as object, childTrees);
+
+  for (const [key, val] of Object.entries(childTrees)) {
+    Object.defineProperty(groupFn, key, {
+      value: val,
+      enumerable: true,
+      configurable: true,
+      writable: true,
+    });
+  }
 
   return {
     tree: groupFn,
