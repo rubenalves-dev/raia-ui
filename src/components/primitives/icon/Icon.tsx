@@ -1,5 +1,6 @@
 import { createMemo, merge } from "solid-js";
 import { ICON_SIZES, IconProps, ICONS } from "./Icon.types";
+import "./Icon.scss";
 
 const defaults: Partial<IconProps> = {
   size: "md",
