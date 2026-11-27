@@ -156,7 +156,9 @@
         }
 
         &--today {
-            border-color: var(--primary);
+            outline: 1px var(--primary) solid;
+            outline-offset: 2px;
+            z-index: 1;
             font-weight: var(--font-semibold);
         }
 

@@ -46,7 +46,9 @@ export function DatePicker(props: DatePickerProps) {
   createClickOutside(pickerRef, () => disclosure.close());
   createClickOutside(pickerRef, () => disclosure.close());
 
-  const [viewDate, setViewDate] = createSignal(new Date());
+  const [viewDate, setViewDate] = createSignal<Date>(
+    (prev) => parseIsoLocal(field.value()) ?? prev ?? new Date(),
+  );
   const [inputDisplay, setInputDisplay] = createSignal("");
   const [parseError, setParseError] = createSignal(false);
 
@@ -93,11 +95,6 @@ export function DatePicker(props: DatePickerProps) {
 
       setInputDisplay(formatDate(val, { pattern, fallback: val }));
       setParseError(false);
-
-      const parsed = parseIsoLocal(val);
-      if (parsed) {
-        setViewDate(parsed);
-      }
     },
   );
 
@@ -170,10 +167,6 @@ export function DatePicker(props: DatePickerProps) {
   function onSelectDate(isoDate: string): void {
     field.set(isoDate);
     rest.onChange?.(isoDate);
-    const parsed = parseIsoLocal(isoDate);
-    if (parsed) {
-      setViewDate(parsed);
-    }
   }
 
   function prevMonth(): void {
@@ -305,7 +298,7 @@ export function DatePicker(props: DatePickerProps) {
 
               onClick={disclosure.toggle}
             >
-              <Icon name="x" size="xs" />
+              <Icon name="calendar" size="xs" />
             </button>
           </Tooltip>
         </div>
