@@ -6,20 +6,29 @@ import {
   ButtonSize,
   ButtonVariant,
   Divider,
+  FieldNode,
+  FieldPath,
   ICONS,
   Icon,
   IconName,
   IconSize,
   Placement,
+  Input,
   Spinner,
   SpinnerSize,
   SpinnerVariant,
   createClickOutside,
   createDisclosure,
+  createForm,
   createPosition,
   createTooltip,
+  email,
+  minLength,
+  Combobox,
+  required,
 } from "raia-ui";
 import { Tooltip } from "../src/components/primitives/tooltip/Tooltip";
+import type { ComboboxOption } from "../src/components/forms/combobox/Combobox.types";
 import "./App.css";
 
 const BUTTON_VARIANTS: ButtonVariant[] = [
@@ -56,6 +65,14 @@ const PLACEMENTS: Placement[] = [
   "right",
 ];
 const ALL_ICONS = Object.keys(ICONS) as IconName[];
+
+const ROLE_OPTIONS: ComboboxOption[] = [
+  { label: "Frontend Engineer", value: "frontend" },
+  { label: "Backend Engineer", value: "backend" },
+  { label: "Fullstack Engineer", value: "fullstack" },
+  { label: "Designer", value: "designer" },
+  { label: "Product Manager (Unavailable)", value: "pm", disabled: true },
+];
 
 export function App() {
   // Button state
@@ -102,14 +119,40 @@ export function App() {
 
   // createTooltip primitive demo
   const [rawTipEl, setRawTipEl] = createSignal<HTMLSpanElement | undefined>();
-  createTooltip(
-    rawTipEl,
-    () => ({
-      content: "Attached via createTooltip() primitive",
-      placement: "right",
-      delay: 150,
-    }),
+  createTooltip(rawTipEl, () => ({
+    content: "Attached via createTooltip() primitive",
+    placement: "right",
+    delay: 150,
+  }));
+
+  // Forms demo
+  const form = createForm(
+    {
+      name: "",
+      email: "",
+      role: null as string | number | null,
+    },
+    (p) => {
+      required(p.name, { message: "Name is required" });
+      minLength(p.name, 2, {
+        message: "Name must be at least 2 characters",
+      });
+      required(p.email, { message: "Email is required" });
+      email(p.email, { message: "Enter a valid email address" });
+      required(p.role as FieldPath<string | number | null>, {
+        message: "Please select a role",
+      });
+    },
   );
+  const [submittedValues, setSubmittedValues] = createSignal<string | null>(
+    null,
+  );
+
+  // Standalone form controls demo
+  const [standaloneText, setStandaloneText] = createSignal("");
+  const [standaloneRole, setStandaloneRole] = createSignal<
+    string | number | null
+  >("frontend");
 
   return (
     <div class="pg-layout">
@@ -123,6 +166,7 @@ export function App() {
         </div>
         <nav class="pg-nav" aria-label="Sections">
           <a href="#components">Components</a>
+          <a href="#forms">Forms</a>
           <a href="#primitives">Primitives</a>
         </nav>
       </header>
@@ -174,6 +218,13 @@ export function App() {
                   </Button>
                 )}
               </For>
+            </div>
+          </div>
+
+          <div class="pg-group">
+            <span class="pg-label">Input</span>
+            <div class="pg-row">
+              <Input />
             </div>
           </div>
 
@@ -422,6 +473,152 @@ export function App() {
               <Tooltip content="Right placement" placement="right">
                 <Button variant="outline">Right</Button>
               </Tooltip>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <h2 id="forms" class="pg-section-heading">
+        Forms
+      </h2>
+
+      <div class="pg-grid">
+        {/* createForm + Input + Combobox */}
+        <section class="pg-card">
+          <div class="pg-card-header">
+            <div>
+              <h3 class="pg-card-title">createForm + Input + Combobox</h3>
+              <p class="pg-card-desc">
+                Schema-validated form with field-level touched/dirty/error
+                state.
+              </p>
+            </div>
+            <div class="pg-row">
+              <Badge variant={form().valid() ? "success" : "secondary"}>
+                {form().valid() ? "Valid" : "Incomplete"}
+              </Badge>
+              <Badge variant={form().dirty() ? "info" : "outline"}>
+                {form().dirty() ? "Dirty" : "Clean"}
+              </Badge>
+            </div>
+          </div>
+
+          <form
+            class="pg-form"
+            onSubmit={form.submit(async (values) => {
+              setSubmittedValues(JSON.stringify(values, null, 2));
+            })}
+          >
+            <div class="pg-form-grid">
+              <div class="pg-field">
+                <label class="pg-field-label" for="pg-form-name">
+                  Name
+                </label>
+                <Input
+                  id="pg-form-name"
+                  field={form.name as unknown as FieldNode<string | number>}
+                  placeholder="Ada Lovelace"
+                />
+                <Show when={form.name().invalid() && form.name().firstError()}>
+                  {(msg) => <p class="pg-field-error">{msg()}</p>}
+                </Show>
+              </div>
+
+              <div class="pg-field">
+                <label class="pg-field-label" for="pg-form-email">
+                  Email
+                </label>
+                <Input
+                  id="pg-form-email"
+                  type="email"
+                  field={form.email as unknown as FieldNode<string | number>}
+                  placeholder="ada@example.com"
+                />
+                <Show
+                  when={form.email().invalid() && form.email().firstError()}
+                >
+                  {(msg) => <p class="pg-field-error">{msg()}</p>}
+                </Show>
+              </div>
+
+              <div class="pg-field">
+                <span class="pg-field-label">Role</span>
+                <Combobox
+                  field={form.role as FieldNode<string | number | null>}
+                  options={ROLE_OPTIONS}
+                  placeholder="Choose a role..."
+                  clearable
+                />
+                <Show when={form.role().invalid() && form.role().firstError()}>
+                  {(msg) => <p class="pg-field-error">{msg()}</p>}
+                </Show>
+              </div>
+            </div>
+
+            <div class="pg-row">
+              <Button type="submit" isLoading={form().submitting()}>
+                Submit
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  form.reset();
+                  setSubmittedValues(null);
+                }}
+              >
+                Reset
+              </Button>
+            </div>
+
+            <Show when={submittedValues()}>
+              {(json) => <pre class="pg-pre">{json()}</pre>}
+            </Show>
+          </form>
+        </section>
+
+        {/* Standalone Input & Combobox */}
+        <section class="pg-card">
+          <div class="pg-card-header">
+            <div>
+              <h3 class="pg-card-title">Standalone Input &amp; Combobox</h3>
+              <p class="pg-card-desc">
+                Controlled usage without createForm via value and onChange.
+              </p>
+            </div>
+          </div>
+
+          <div class="pg-form-grid">
+            <div class="pg-field">
+              <span class="pg-field-label">
+                Controlled Input ({String(standaloneText() || "empty")})
+              </span>
+              <Input
+                type="search"
+                value={standaloneText()}
+                onChange={(val) => setStandaloneText(String(val))}
+                placeholder="Type something..."
+              />
+            </div>
+
+            <div class="pg-field">
+              <span class="pg-field-label">
+                Controlled Combobox ({String(standaloneRole() ?? "none")})
+              </span>
+              <Combobox
+                value={standaloneRole()}
+                onChange={setStandaloneRole}
+                options={ROLE_OPTIONS}
+                clearable
+              />
+            </div>
+
+            <div class="pg-field">
+              <span class="pg-field-label">Invalid &amp; Disabled States</span>
+              <div class="pg-row">
+                <Input invalid value="Invalid value" />
+                <Input disabled value="Disabled input" />
+              </div>
             </div>
           </div>
         </section>

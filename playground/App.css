@@ -280,3 +280,45 @@ body {
   font-size: 0.8rem;
   color: #334155;
 }
+
+.pg-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pg-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.pg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.pg-field-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.pg-field-error {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #dc2626;
+}
+
+.pg-pre {
+  margin: 0;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8rem;
+  color: #1e293b;
+  overflow-x: auto;
+}
