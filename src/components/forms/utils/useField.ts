@@ -51,7 +51,7 @@ export const FIELD_BIND_KEYS = [
   "value",
   "disabled",
   "invalid",
-  "onChange",
+  // "onChange",
   "onBlur",
 ] as const;
 

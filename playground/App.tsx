@@ -5,6 +5,7 @@ import {
   Button,
   ButtonSize,
   ButtonVariant,
+  DatePicker,
   Divider,
   FieldNode,
   FieldPath,
@@ -130,7 +131,8 @@ export function App() {
     {
       name: "",
       email: "",
-      role: null as string | number | null,
+      role: null as string | null,
+      date: "",
     },
     (p) => {
       required(p.name, { message: "Name is required" });
@@ -142,6 +144,7 @@ export function App() {
       required(p.role as FieldPath<string | number | null>, {
         message: "Please select a role",
       });
+      required(p.date, { message: "Please select a date" });
     },
   );
   const [submittedValues, setSubmittedValues] = createSignal<string | null>(
@@ -153,6 +156,8 @@ export function App() {
   const [standaloneRole, setStandaloneRole] = createSignal<
     string | number | null
   >("frontend");
+  const [standaloneDate, setStandaloneDate] = createSignal("2026-11-27");
+  const [isoDate, setIsoDate] = createSignal("");
 
   return (
     <div class="pg-layout">
@@ -483,11 +488,13 @@ export function App() {
       </h2>
 
       <div class="pg-grid">
-        {/* createForm + Input + Combobox */}
+        {/* createForm + Input + Combobox + DatePicker */}
         <section class="pg-card">
           <div class="pg-card-header">
             <div>
-              <h3 class="pg-card-title">createForm + Input + Combobox</h3>
+              <h3 class="pg-card-title">
+                createForm + Input + Combobox + DatePicker
+              </h3>
               <p class="pg-card-desc">
                 Schema-validated form with field-level touched/dirty/error
                 state.
@@ -553,6 +560,20 @@ export function App() {
                   {(msg) => <p class="pg-field-error">{msg()}</p>}
                 </Show>
               </div>
+
+              <div class="pg-field">
+                <label class="pg-field-label" for="pg-form-date">
+                  Start Date
+                </label>
+                <DatePicker
+                  id="pg-form-date"
+                  field={form.date}
+                  placeholder="DD/MM/YYYY"
+                />
+                <Show when={form.date().invalid() && form.date().firstError()}>
+                  {(msg) => <p class="pg-field-error">{msg()}</p>}
+                </Show>
+              </div>
             </div>
 
             <div class="pg-row">
@@ -577,11 +598,13 @@ export function App() {
           </form>
         </section>
 
-        {/* Standalone Input & Combobox */}
+        {/* Standalone Input, Combobox & DatePicker */}
         <section class="pg-card">
           <div class="pg-card-header">
             <div>
-              <h3 class="pg-card-title">Standalone Input &amp; Combobox</h3>
+              <h3 class="pg-card-title">
+                Standalone Input, Combobox &amp; DatePicker
+              </h3>
               <p class="pg-card-desc">
                 Controlled usage without createForm via value and onChange.
               </p>
@@ -614,10 +637,35 @@ export function App() {
             </div>
 
             <div class="pg-field">
+              <span class="pg-field-label">
+                Controlled DatePicker ({standaloneDate() || "none"})
+              </span>
+              <DatePicker
+                value={standaloneDate()}
+                onChange={setStandaloneDate}
+                clearable
+              />
+            </div>
+
+            <div class="pg-field">
+              <span class="pg-field-label">
+                Custom Format YYYY-MM-DD ({isoDate() || "none"})
+              </span>
+              <DatePicker
+                value={isoDate()}
+                onChange={setIsoDate}
+                format="YYYY-MM-DD"
+                placeholder="YYYY-MM-DD"
+              />
+            </div>
+
+            <div class="pg-field">
               <span class="pg-field-label">Invalid &amp; Disabled States</span>
               <div class="pg-row">
                 <Input invalid value="Invalid value" />
                 <Input disabled value="Disabled input" />
+                <DatePicker invalid value="2026-11-27" />
+                <DatePicker disabled value="2026-11-27" />
               </div>
             </div>
           </div>
