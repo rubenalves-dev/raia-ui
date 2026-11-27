@@ -29,7 +29,6 @@ export function createTooltip(
     return {
       placement: o.placement ?? "top",
       offset: o.offset ?? 6,
-      open: disclosure.isOpen,
     };
   });
 
@@ -67,9 +66,10 @@ export function createTooltip(
       open: disclosure.isOpen(),
       el: target(),
       text: resolvedContent(),
+      disabled: isDisabled(),
     }),
-    ({ open, el, text }) => {
-      if (!open || !el || !text || isDisabled()) {
+    ({ open, el, text, disabled }) => {
+      if (!open || !el || !text || disabled) {
         teardownTip(el);
         return;
       }
@@ -90,17 +90,21 @@ export function createTooltip(
       }
 
       tipEl.textContent = text;
-      pos.update();
     },
   );
 
   createEffect(
-    () => ({ x: pos.x(), y: pos.y(), placement: pos.resolvedPlacement() }),
-    ({ x, y, placement }) => {
-      if (!tipEl) return;
-      tipEl.style.left = `${x}px`;
-      tipEl.style.top = `${y}px`;
-      tipEl.dataset.placement = placement;
+    () => ({
+      tip: pos.floating(),
+      x: pos.x(),
+      y: pos.y(),
+      placement: pos.resolvedPlacement(),
+    }),
+    ({ tip, x, y, placement }) => {
+      if (!tip) return;
+      tip.style.left = `${x}px`;
+      tip.style.top = `${y}px`;
+      tip.dataset.placement = placement;
     },
   );
 
