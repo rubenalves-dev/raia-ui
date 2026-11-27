@@ -55,9 +55,9 @@ export function createPosition(
     aRect: DOMRect,
     fRect: DOMRect,
     target: Placement,
+    gap: number,
     matchWidth?: boolean,
   ): { x: number; y: number; minWidth: number | undefined } {
-    const gap = offset();
     const effectiveWidth = matchWidth ? aRect.width : fRect.width;
     switch (target) {
       case "top":
@@ -130,6 +130,9 @@ export function createPosition(
   function update(
     aEl: HTMLElement | undefined = anchor(),
     fEl: HTMLElement | undefined = floating(),
+    targetPlacement: Placement = placement(),
+    pad: number = padding(),
+    gap: number = offset(),
   ): void {
     if (!aEl || !fEl) return;
 
@@ -137,21 +140,20 @@ export function createPosition(
     const fRect = fEl.getBoundingClientRect();
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    const pad = padding();
 
-    let active = placement();
-    let coords = computeCoords(aRect, fRect, active);
+    let active = targetPlacement;
+    let coords = computeCoords(aRect, fRect, active, gap);
 
     if (active.startsWith("bottom") && coords.y + fRect.height > vh - pad) {
       const flipped = active.replace("bottom", "top") as Placement;
-      const flippedCoords = computeCoords(aRect, fRect, flipped);
+      const flippedCoords = computeCoords(aRect, fRect, flipped, gap);
       if (flippedCoords.y >= pad) {
         active = flipped;
         coords = flippedCoords;
       }
     } else if (active.startsWith("top") && coords.y < pad) {
       const flipped = active.replace("top", "bottom") as Placement;
-      const flippedCoords = computeCoords(aRect, fRect, flipped);
+      const flippedCoords = computeCoords(aRect, fRect, flipped, gap);
       if (flippedCoords.y + fRect.height <= vh - pad) {
         active = flipped;
         coords = flippedCoords;
@@ -178,13 +180,13 @@ export function createPosition(
         padding: o.padding ?? 8,
       };
     },
-    ({ isOpen, aEl, fEl }) => {
+    ({ isOpen, aEl, fEl, placement: p, offset: off, padding: pad }) => {
       if (!isOpen || !aEl || !fEl) {
         setHidden(false);
         return;
       }
 
-      const sync = () => update(aEl, fEl);
+      const sync = () => update(aEl, fEl, p, pad, off);
       sync();
 
       const ro = new ResizeObserver(sync);
