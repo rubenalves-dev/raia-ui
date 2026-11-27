@@ -5,6 +5,7 @@ export interface IconProps {
   name: IconName;
   label?: string;
   size?: IconSize;
+  class?: string;
 }
 
 export type IconName = keyof typeof ICONS;

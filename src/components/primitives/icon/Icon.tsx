@@ -17,11 +17,13 @@ export function Icon(props: IconProps) {
       : s;
   };
 
+  const classes = () => ["v-icon", merged.class];
+
   const markup = createMemo(() => ICONS[merged.name] || "");
 
   return (
     <span
-      class="v-icon"
+      class={classes()}
       role={merged.label ? "img" : undefined}
       aria-label={merged.label || undefined}
       aria-hidden={merged.label ? undefined : "true"}

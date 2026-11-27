@@ -5,6 +5,7 @@ import {
   Button,
   ButtonSize,
   ButtonVariant,
+  Checkbox,
   DatePicker,
   Divider,
   FieldNode,
@@ -27,6 +28,7 @@ import {
   minLength,
   Combobox,
   required,
+  validate,
 } from "raia-ui";
 import { Tooltip } from "../src/components/primitives/tooltip/Tooltip";
 import type { ComboboxOption } from "../src/components/forms/combobox/Combobox.types";
@@ -133,6 +135,7 @@ export function App() {
       email: "",
       role: null as string | null,
       date: "",
+      terms: false as boolean,
     },
     (p) => {
       required(p.name, { message: "Name is required" });
@@ -145,6 +148,9 @@ export function App() {
         message: "Please select a role",
       });
       required(p.date, { message: "Please select a date" });
+      validate(p.terms as FieldPath<boolean>, ({ value }) =>
+        value ? null : { kind: "required", message: "You must accept the terms" },
+      );
     },
   );
   const [submittedValues, setSubmittedValues] = createSignal<string | null>(
@@ -158,6 +164,7 @@ export function App() {
   >("frontend");
   const [standaloneDate, setStandaloneDate] = createSignal("2026-11-27");
   const [isoDate, setIsoDate] = createSignal("");
+  const [standaloneChecked, setStandaloneChecked] = createSignal(true);
 
   return (
     <div class="pg-layout">
@@ -488,12 +495,12 @@ export function App() {
       </h2>
 
       <div class="pg-grid">
-        {/* createForm + Input + Combobox + DatePicker */}
+        {/* createForm + Input + Combobox + DatePicker + Checkbox */}
         <section class="pg-card">
           <div class="pg-card-header">
             <div>
               <h3 class="pg-card-title">
-                createForm + Input + Combobox + DatePicker
+                createForm + Input + Combobox + DatePicker + Checkbox
               </h3>
               <p class="pg-card-desc">
                 Schema-validated form with field-level touched/dirty/error
@@ -574,6 +581,22 @@ export function App() {
                   {(msg) => <p class="pg-field-error">{msg()}</p>}
                 </Show>
               </div>
+
+              <div class="pg-field">
+                <div class="pg-row">
+                  <Checkbox
+                    id="pg-form-terms"
+                    field={form.terms as FieldNode<boolean>}
+                    required
+                  />
+                  <label class="pg-field-label" for="pg-form-terms">
+                    Accept terms &amp; conditions
+                  </label>
+                </div>
+                <Show when={form.terms().invalid() && form.terms().firstError()}>
+                  {(msg) => <p class="pg-field-error">{msg()}</p>}
+                </Show>
+              </div>
             </div>
 
             <div class="pg-row">
@@ -598,12 +621,12 @@ export function App() {
           </form>
         </section>
 
-        {/* Standalone Input, Combobox & DatePicker */}
+        {/* Standalone Input, Combobox, DatePicker & Checkbox */}
         <section class="pg-card">
           <div class="pg-card-header">
             <div>
               <h3 class="pg-card-title">
-                Standalone Input, Combobox &amp; DatePicker
+                Standalone Input, Combobox, DatePicker &amp; Checkbox
               </h3>
               <p class="pg-card-desc">
                 Controlled usage without createForm via value and onChange.
@@ -660,12 +683,34 @@ export function App() {
             </div>
 
             <div class="pg-field">
+              <span class="pg-field-label">
+                Controlled &amp; Indeterminate Checkbox (
+                {standaloneChecked() ? "checked" : "unchecked"})
+              </span>
+              <div class="pg-row">
+                <label class="pg-row">
+                  <Checkbox
+                    value={standaloneChecked()}
+                    onChange={setStandaloneChecked}
+                  />
+                  <span class="pg-label">Controlled</span>
+                </label>
+                <label class="pg-row">
+                  <Checkbox indeterminate value={false} />
+                  <span class="pg-label">Indeterminate</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="pg-field">
               <span class="pg-field-label">Invalid &amp; Disabled States</span>
               <div class="pg-row">
                 <Input invalid value="Invalid value" />
                 <Input disabled value="Disabled input" />
                 <DatePicker invalid value="2026-11-27" />
                 <DatePicker disabled value="2026-11-27" />
+                <Checkbox invalid value={false} />
+                <Checkbox disabled value={true} />
               </div>
             </div>
           </div>
