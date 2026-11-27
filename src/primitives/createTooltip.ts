@@ -1,4 +1,4 @@
-import { Accessor, createEffect, createUniqueId, onCleanup } from "solid-js";
+import { Accessor, createEffect, createUniqueId } from "solid-js";
 import { createDisclosure } from "./createDisclosure";
 import { createPosition, Placement } from "./createPosition";
 
@@ -126,7 +126,7 @@ export function createTooltip(
       el.addEventListener("focusout", hide);
       el.addEventListener("keydown", onKeyDown);
 
-      onCleanup(() => {
+      return () => {
         pos.setAnchor(undefined);
         hide();
         teardownTip(el);
@@ -135,7 +135,7 @@ export function createTooltip(
         el.removeEventListener("pointerleave", hide);
         el.removeEventListener("focusout", hide);
         el.removeEventListener("keydown", onKeyDown);
-      });
+      };
     },
   );
 }

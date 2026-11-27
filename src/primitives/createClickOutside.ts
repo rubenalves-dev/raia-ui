@@ -1,4 +1,4 @@
-import { Accessor, createEffect, onCleanup } from "solid-js";
+import { Accessor, createEffect } from "solid-js";
 
 export type ClickOutsideTarget =
   Accessor<HTMLElement | undefined> | Accessor<(HTMLElement | undefined)[]>;
@@ -16,13 +16,13 @@ export function createClickOutside(
   const eventName = options.event ?? "pointerdown";
 
   createEffect(
-    () => (options.enabled ? options.enabled() : true),
-    (active) => {
+    () => [options.enabled ? options.enabled() : true, target()],
+    ([active, target]) => {
       if (!active) return;
 
       const onEvent = (event: MouseEvent | PointerEvent) => {
         const path = event.composedPath();
-        const raw = target();
+        const raw = target;
         const elements = Array.isArray(raw) ? raw : [raw];
         const isInside = elements.some((el) => el && path.includes(el));
         if (!isInside) {
@@ -31,7 +31,7 @@ export function createClickOutside(
       };
 
       document.addEventListener(eventName, onEvent, true);
-      onCleanup(() => document.removeEventListener(eventName, onEvent, true));
+      return () => document.removeEventListener(eventName, onEvent, true);
     },
   );
 }

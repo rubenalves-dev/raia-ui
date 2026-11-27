@@ -1,4 +1,4 @@
-import { Accessor, createEffect, createSignal, onCleanup } from "solid-js";
+import { Accessor, createEffect, createSignal, SourceAccessor } from "solid-js";
 
 export type Placement =
   | "top"
@@ -15,6 +15,10 @@ export interface CreatePositionOpts {
   offset?: number;
   padding?: number;
   open?: Accessor<boolean>;
+  matchWidth?: Accessor<boolean>;
+  hideWhenDetached?: boolean;
+
+  onAnchorHidden?: () => void;
 }
 
 export interface PositionResult {
@@ -23,7 +27,10 @@ export interface PositionResult {
   readonly resolvedPlacement: Accessor<Placement>;
   readonly setAnchor: (el: HTMLElement | undefined) => void;
   readonly setFloating: (el: HTMLElement | undefined) => void;
+  readonly anchor: SourceAccessor<HTMLElement | undefined>;
+  readonly floating: SourceAccessor<HTMLElement | undefined>;
   readonly update: () => void;
+  readonly styles: () => any;
 }
 
 export function createPosition(
@@ -42,60 +49,88 @@ export function createPosition(
   const [y, setY] = createSignal(0);
   const [resolvedPlacement, setResolvedPlacement] =
     createSignal<Placement>("bottom-start");
+  const [hidden, setHidden] = createSignal(false);
 
   function computeCoords(
     aRect: DOMRect,
     fRect: DOMRect,
     target: Placement,
-  ): { x: number; y: number } {
+    matchWidth?: boolean,
+  ): { x: number; y: number; minWidth: number | undefined } {
     const gap = offset();
+    const effectiveWidth = matchWidth ? aRect.width : fRect.width;
     switch (target) {
       case "top":
         return {
-          x: aRect.left + (aRect.width - fRect.width) / 2,
+          x: aRect.left + (aRect.width - effectiveWidth) / 2,
           y: aRect.top - fRect.height - gap,
+          minWidth: effectiveWidth,
         };
       case "top-start":
         return {
           x: aRect.left,
           y: aRect.top - fRect.height - gap,
+          minWidth: effectiveWidth,
         };
       case "top-end":
         return {
-          x: aRect.left + (aRect.width - fRect.width),
+          x: aRect.right - effectiveWidth,
           y: aRect.top - fRect.height - gap,
+          minWidth: effectiveWidth,
         };
       case "bottom":
         return {
-          x: aRect.left + (aRect.width - fRect.width) / 2,
+          x: aRect.left + (aRect.width - effectiveWidth) / 2,
           y: aRect.bottom + gap,
+          minWidth: effectiveWidth,
         };
       case "bottom-start":
         return {
           x: aRect.left,
           y: aRect.bottom + gap,
+          minWidth: effectiveWidth,
         };
       case "bottom-end":
         return {
-          x: aRect.left + (aRect.width - fRect.width),
+          x: aRect.right - effectiveWidth,
           y: aRect.bottom + gap,
+          minWidth: effectiveWidth,
         };
       case "left":
         return {
           x: aRect.left - fRect.width - gap,
           y: aRect.top + (aRect.height - fRect.height) / 2,
+          minWidth: effectiveWidth,
         };
       case "right":
         return {
           x: aRect.right + gap,
           y: aRect.top + (aRect.height - fRect.height) / 2,
+          minWidth: effectiveWidth,
         };
     }
   }
 
-  function update(): void {
-    const aEl = anchor();
-    const fEl = floating();
+  function handleVisibility(outOfView: boolean): void {
+    const enabled = getOpts().hideWhenDetached ?? true;
+    if (!enabled) {
+      setHidden(false);
+      return;
+    }
+
+    const wasHidden = hidden();
+    if (wasHidden === outOfView) return;
+
+    setHidden(outOfView);
+    if (outOfView) {
+      getOpts().onAnchorHidden?.();
+    }
+  }
+
+  function update(
+    aEl: HTMLElement | undefined = anchor(),
+    fEl: HTMLElement | undefined = floating(),
+  ): void {
     if (!aEl || !fEl) return;
 
     const aRect = aEl.getBoundingClientRect();
@@ -144,24 +179,59 @@ export function createPosition(
       };
     },
     ({ isOpen, aEl, fEl }) => {
-      if (!isOpen || !aEl || !fEl) return;
+      if (!isOpen || !aEl || !fEl) {
+        setHidden(false);
+        return;
+      }
 
-      update();
+      const sync = () => update(aEl, fEl);
+      sync();
 
-      const ro = new ResizeObserver(update);
+      const ro = new ResizeObserver(sync);
       ro.observe(aEl);
       ro.observe(fEl);
 
-      window.addEventListener("scroll", update, true);
-      window.addEventListener("resize", update);
+      const io = new IntersectionObserver(
+        ([entry]) => {
+          handleVisibility(!entry.isIntersecting);
+        },
+        { threshold: 0 },
+      );
+      io.observe(aEl);
 
-      onCleanup(() => {
+      window.addEventListener("scroll", sync, true);
+      window.addEventListener("resize", sync);
+
+      return () => {
         ro.disconnect();
-        window.removeEventListener("scroll", update, true);
-        window.removeEventListener("resize", update);
-      });
+        io.disconnect();
+        window.removeEventListener("scroll", sync, true);
+        window.removeEventListener("resize", sync);
+      };
     },
   );
 
-  return { x, y, resolvedPlacement, setAnchor, setFloating, update };
+  function styles(): unknown {
+    const isHidden = hidden();
+    return {
+      position: "fixed" as const,
+      top: `${y()}px`,
+      left: `${x()}px`,
+      zIndex: 60,
+      visibility: isHidden ? ("hidden" as const) : ("visible" as const),
+      pointerEvents: isHidden ? ("none" as const) : undefined,
+    };
+  }
+
+  return {
+    x,
+    y,
+    resolvedPlacement,
+    setAnchor,
+    setFloating,
+    update: () => update(),
+    anchor,
+    floating,
+    styles,
+  };
 }
