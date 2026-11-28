@@ -19,6 +19,7 @@ import {
   Spinner,
   SpinnerSize,
   SpinnerVariant,
+  Switch,
   createClickOutside,
   createDisclosure,
   createForm,
@@ -136,6 +137,7 @@ export function App() {
       role: null as string | null,
       date: "",
       terms: false as boolean,
+      notifications: false as boolean,
     },
     (p) => {
       required(p.name, { message: "Name is required" });
@@ -165,6 +167,7 @@ export function App() {
   const [standaloneDate, setStandaloneDate] = createSignal("2026-11-27");
   const [isoDate, setIsoDate] = createSignal("");
   const [standaloneChecked, setStandaloneChecked] = createSignal(true);
+  const [standaloneSwitch, setStandaloneSwitch] = createSignal(false);
 
   return (
     <div class="pg-layout">
@@ -495,12 +498,12 @@ export function App() {
       </h2>
 
       <div class="pg-grid">
-        {/* createForm + Input + Combobox + DatePicker + Checkbox */}
+        {/* createForm + Input + Combobox + DatePicker + Checkbox + Switch */}
         <section class="pg-card">
           <div class="pg-card-header">
             <div>
               <h3 class="pg-card-title">
-                createForm + Input + Combobox + DatePicker + Checkbox
+                createForm + Input + Combobox + DatePicker + Checkbox + Switch
               </h3>
               <p class="pg-card-desc">
                 Schema-validated form with field-level touched/dirty/error
@@ -597,6 +600,18 @@ export function App() {
                   {(msg) => <p class="pg-field-error">{msg()}</p>}
                 </Show>
               </div>
+
+              <div class="pg-field">
+                <div class="pg-row">
+                  <Switch
+                    id="pg-form-notifications"
+                    field={form.notifications as FieldNode<boolean>}
+                  />
+                  <label class="pg-field-label" for="pg-form-notifications">
+                    Email notifications
+                  </label>
+                </div>
+              </div>
             </div>
 
             <div class="pg-row">
@@ -621,12 +636,12 @@ export function App() {
           </form>
         </section>
 
-        {/* Standalone Input, Combobox, DatePicker & Checkbox */}
+        {/* Standalone Input, Combobox, DatePicker, Checkbox & Switch */}
         <section class="pg-card">
           <div class="pg-card-header">
             <div>
               <h3 class="pg-card-title">
-                Standalone Input, Combobox, DatePicker &amp; Checkbox
+                Standalone Input, Combobox, DatePicker, Checkbox &amp; Switch
               </h3>
               <p class="pg-card-desc">
                 Controlled usage without createForm via value and onChange.
@@ -703,6 +718,21 @@ export function App() {
             </div>
 
             <div class="pg-field">
+              <span class="pg-field-label">
+                Controlled Switch ({standaloneSwitch() ? "on" : "off"})
+              </span>
+              <div class="pg-row">
+                <label class="pg-row">
+                  <Switch
+                    value={standaloneSwitch()}
+                    onChange={setStandaloneSwitch}
+                  />
+                  <span class="pg-label">Controlled</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="pg-field">
               <span class="pg-field-label">Invalid &amp; Disabled States</span>
               <div class="pg-row">
                 <Input invalid value="Invalid value" />
@@ -711,6 +741,8 @@ export function App() {
                 <DatePicker disabled value="2026-11-27" />
                 <Checkbox invalid value={false} />
                 <Checkbox disabled value={true} />
+                <Switch invalid value={false} />
+                <Switch disabled value={true} />
               </div>
             </div>
           </div>
