@@ -20,6 +20,7 @@ import {
   SpinnerSize,
   SpinnerVariant,
   Switch,
+  Textarea,
   createClickOutside,
   createDisclosure,
   createForm,
@@ -138,6 +139,7 @@ export function App() {
       date: "",
       terms: false as boolean,
       notifications: false as boolean,
+      bio: "",
     },
     (p) => {
       required(p.name, { message: "Name is required" });
@@ -153,6 +155,9 @@ export function App() {
       validate(p.terms as FieldPath<boolean>, ({ value }) =>
         value ? null : { kind: "required", message: "You must accept the terms" },
       );
+      minLength(p.bio, 10, {
+        message: "Bio must be at least 10 characters",
+      });
     },
   );
   const [submittedValues, setSubmittedValues] = createSignal<string | null>(
@@ -168,6 +173,7 @@ export function App() {
   const [isoDate, setIsoDate] = createSignal("");
   const [standaloneChecked, setStandaloneChecked] = createSignal(true);
   const [standaloneSwitch, setStandaloneSwitch] = createSignal(false);
+  const [standaloneBio, setStandaloneBio] = createSignal("");
 
   return (
     <div class="pg-layout">
@@ -498,12 +504,13 @@ export function App() {
       </h2>
 
       <div class="pg-grid">
-        {/* createForm + Input + Combobox + DatePicker + Checkbox + Switch */}
+        {/* createForm + Input + Combobox + DatePicker + Checkbox + Switch + Textarea */}
         <section class="pg-card">
           <div class="pg-card-header">
             <div>
               <h3 class="pg-card-title">
-                createForm + Input + Combobox + DatePicker + Checkbox + Switch
+                createForm + Input + Combobox + DatePicker + Checkbox + Switch +
+                Textarea
               </h3>
               <p class="pg-card-desc">
                 Schema-validated form with field-level touched/dirty/error
@@ -612,6 +619,21 @@ export function App() {
                   </label>
                 </div>
               </div>
+
+              <div class="pg-field">
+                <label class="pg-field-label" for="pg-form-bio">
+                  Bio (optional, min 10 chars)
+                </label>
+                <Textarea
+                  id="pg-form-bio"
+                  field={form.bio}
+                  placeholder="Tell us about yourself..."
+                  rows={3}
+                />
+                <Show when={form.bio().invalid() && form.bio().firstError()}>
+                  {(msg) => <p class="pg-field-error">{msg()}</p>}
+                </Show>
+              </div>
             </div>
 
             <div class="pg-row">
@@ -636,12 +658,13 @@ export function App() {
           </form>
         </section>
 
-        {/* Standalone Input, Combobox, DatePicker, Checkbox & Switch */}
+        {/* Standalone Input, Combobox, DatePicker, Checkbox, Switch & Textarea */}
         <section class="pg-card">
           <div class="pg-card-header">
             <div>
               <h3 class="pg-card-title">
-                Standalone Input, Combobox, DatePicker, Checkbox &amp; Switch
+                Standalone Input, Combobox, DatePicker, Checkbox, Switch &amp;
+                Textarea
               </h3>
               <p class="pg-card-desc">
                 Controlled usage without createForm via value and onChange.
@@ -733,6 +756,19 @@ export function App() {
             </div>
 
             <div class="pg-field">
+              <span class="pg-field-label">
+                Auto-resizing Textarea ({standaloneBio().length} chars)
+              </span>
+              <Textarea
+                value={standaloneBio()}
+                onChange={setStandaloneBio}
+                autoResize
+                rows={2}
+                placeholder="Type to auto-expand..."
+              />
+            </div>
+
+            <div class="pg-field">
               <span class="pg-field-label">Invalid &amp; Disabled States</span>
               <div class="pg-row">
                 <Input invalid value="Invalid value" />
@@ -743,6 +779,8 @@ export function App() {
                 <Checkbox disabled value={true} />
                 <Switch invalid value={false} />
                 <Switch disabled value={true} />
+                <Textarea invalid value="Invalid textarea" rows={2} />
+                <Textarea disabled value="Disabled textarea" rows={2} />
               </div>
             </div>
           </div>
