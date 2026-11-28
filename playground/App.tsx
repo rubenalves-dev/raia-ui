@@ -16,6 +16,8 @@ import {
   IconSize,
   Placement,
   Input,
+  RadioGroup,
+  RadioOption,
   Spinner,
   SpinnerSize,
   SpinnerVariant,
@@ -79,6 +81,21 @@ const ROLE_OPTIONS: ComboboxOption[] = [
   { label: "Product Manager (Unavailable)", value: "pm", disabled: true },
 ];
 
+const PLAN_OPTIONS: RadioOption[] = [
+  { label: "Free", value: "free", description: "Up to 3 projects" },
+  {
+    label: "Pro",
+    value: "pro",
+    description: "Unlimited projects & priority support",
+  },
+  {
+    label: "Enterprise (Unavailable)",
+    value: "enterprise",
+    description: "Custom SLA",
+    disabled: true,
+  },
+];
+
 export function App() {
   // Button state
   const [btnLoading, setBtnLoading] = createSignal(false);
@@ -140,6 +157,7 @@ export function App() {
       terms: false as boolean,
       notifications: false as boolean,
       bio: "",
+      plan: null as string | null,
     },
     (p) => {
       required(p.name, { message: "Name is required" });
@@ -158,6 +176,9 @@ export function App() {
       minLength(p.bio, 10, {
         message: "Bio must be at least 10 characters",
       });
+      required(p.plan as FieldPath<string | number | boolean | null>, {
+        message: "Please select a plan",
+      });
     },
   );
   const [submittedValues, setSubmittedValues] = createSignal<string | null>(
@@ -174,6 +195,9 @@ export function App() {
   const [standaloneChecked, setStandaloneChecked] = createSignal(true);
   const [standaloneSwitch, setStandaloneSwitch] = createSignal(false);
   const [standaloneBio, setStandaloneBio] = createSignal("");
+  const [standalonePlan, setStandalonePlan] = createSignal<
+    string | number | boolean | null
+  >("pro");
 
   return (
     <div class="pg-layout">
@@ -504,13 +528,13 @@ export function App() {
       </h2>
 
       <div class="pg-grid">
-        {/* createForm + Input + Combobox + DatePicker + Checkbox + Switch + Textarea */}
+        {/* createForm + Input + Combobox + DatePicker + Checkbox + Switch + Textarea + RadioGroup */}
         <section class="pg-card">
           <div class="pg-card-header">
             <div>
               <h3 class="pg-card-title">
                 createForm + Input + Combobox + DatePicker + Checkbox + Switch +
-                Textarea
+                Textarea + RadioGroup
               </h3>
               <p class="pg-card-desc">
                 Schema-validated form with field-level touched/dirty/error
@@ -634,6 +658,19 @@ export function App() {
                   {(msg) => <p class="pg-field-error">{msg()}</p>}
                 </Show>
               </div>
+
+              <div class="pg-field">
+                <span class="pg-field-label">Plan</span>
+                <RadioGroup
+                  id="pg-form-plan"
+                  field={form.plan as FieldNode<string | number | boolean | null>}
+                  options={PLAN_OPTIONS}
+                  required
+                />
+                <Show when={form.plan().invalid() && form.plan().firstError()}>
+                  {(msg) => <p class="pg-field-error">{msg()}</p>}
+                </Show>
+              </div>
             </div>
 
             <div class="pg-row">
@@ -658,13 +695,13 @@ export function App() {
           </form>
         </section>
 
-        {/* Standalone Input, Combobox, DatePicker, Checkbox, Switch & Textarea */}
+        {/* Standalone Input, Combobox, DatePicker, Checkbox, Switch, Textarea & RadioGroup */}
         <section class="pg-card">
           <div class="pg-card-header">
             <div>
               <h3 class="pg-card-title">
-                Standalone Input, Combobox, DatePicker, Checkbox, Switch &amp;
-                Textarea
+                Standalone Input, Combobox, DatePicker, Checkbox, Switch,
+                Textarea &amp; RadioGroup
               </h3>
               <p class="pg-card-desc">
                 Controlled usage without createForm via value and onChange.
@@ -769,6 +806,18 @@ export function App() {
             </div>
 
             <div class="pg-field">
+              <span class="pg-field-label">
+                Horizontal RadioGroup ({String(standalonePlan() ?? "none")})
+              </span>
+              <RadioGroup
+                value={standalonePlan()}
+                onChange={setStandalonePlan}
+                options={PLAN_OPTIONS}
+                orientation="horizontal"
+              />
+            </div>
+
+            <div class="pg-field">
               <span class="pg-field-label">Invalid &amp; Disabled States</span>
               <div class="pg-row">
                 <Input invalid value="Invalid value" />
@@ -781,6 +830,24 @@ export function App() {
                 <Switch disabled value={true} />
                 <Textarea invalid value="Invalid textarea" rows={2} />
                 <Textarea disabled value="Disabled textarea" rows={2} />
+                <RadioGroup
+                  invalid
+                  value={null}
+                  options={[
+                    { label: "Option A", value: "a" },
+                    { label: "Option B", value: "b" },
+                  ]}
+                  orientation="horizontal"
+                />
+                <RadioGroup
+                  disabled
+                  value="a"
+                  options={[
+                    { label: "Option A", value: "a" },
+                    { label: "Option B", value: "b" },
+                  ]}
+                  orientation="horizontal"
+                />
               </div>
             </div>
           </div>

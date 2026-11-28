@@ -1,0 +1,93 @@
+.v-radio-group {
+    display: flex;
+    gap: var(--space-3);
+    font-family: var(--font-family);
+
+    &--vertical {
+        flex-direction: column;
+    }
+
+    &--horizontal {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+    }
+
+    &__item {
+        display: inline-flex;
+        align-items: flex-start;
+        gap: var(--space-2);
+        cursor: pointer;
+        user-select: none;
+
+        &--disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    &__control {
+        all: unset;
+        box-sizing: border-box;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.125rem;
+        height: 1.125rem;
+        margin-top: 2px;
+        flex-shrink: 0;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-full);
+        background-color: var(--input);
+        transition:
+            border-color var(--transition-fast),
+            box-shadow var(--transition-fast);
+
+        &:focus-visible {
+            box-shadow:
+                0 0 0 2px var(--surface),
+                0 0 0 4px var(--ring);
+        }
+    }
+
+    &__dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: var(--radius-full);
+        background-color: var(--primary);
+        transform: scale(0);
+        transition: transform var(--transition-fast);
+    }
+
+    &__item--checked &__control {
+        border-color: var(--primary);
+    }
+
+    &__item--checked &__dot {
+        transform: scale(1);
+    }
+
+    &--invalid &__control {
+        border-color: var(--destructive);
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    &__label {
+        font-size: var(--text-sm);
+        font-weight: var(--font-medium);
+        color: var(--on-background);
+        line-height: 1.3;
+        text-wrap: nowrap;
+    }
+
+    &__description {
+        font-size: var(--text-xs);
+        color: var(--muted);
+        line-height: 1.4;
+    }
+}
